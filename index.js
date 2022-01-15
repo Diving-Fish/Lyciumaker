@@ -164,7 +164,7 @@ function downloadCard(){
             contentType: "application/json; charset=utf-8",
             success: function(msg){
                 // alert(msg);
-                alert((new Date().getTime() - timeStamp) + "ms")
+                // alert((new Date().getTime() - timeStamp) + "ms")
                 download();
                 downloadButtonLock = false;
             },
