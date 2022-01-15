@@ -152,15 +152,19 @@ function downloadCard(){
         }
 
         let cardJson = JSON.stringify(cardInfo)
+        let timeStamp = new Date().getTime();
 
         // 发送
         $.ajax({
             type: "POST",
-            url: "https://service-6suhxcdg-1253139667.gz.apigw.tencentcs.com/release/generate_sgs_card",
+            // 服务器地址
+            url: "https://service-8rupwbi8-1253139667.gz.apigw.tencentcs.com/release/generate_sgs_card",  // 新
+            // url: "https://service-6suhxcdg-1253139667.gz.apigw.tencentcs.com/release/generate_sgs_card",  // 旧
             data: cardJson,
             contentType: "application/json; charset=utf-8",
             success: function(msg){
                 // alert(msg);
+                alert((new Date().getTime() - timeStamp) + "ms")
                 download();
                 downloadButtonLock = false;
             },
@@ -879,7 +883,7 @@ function drawVersionInformation(ctx){
     const drawX = 20;
     const drawY = 553;
     ctx.font = "8px FangZhengZhunYuan";
-    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
     const info = "" + document.getElementById("AppName").innerText;
     ctx.fillText(info, drawX, drawY);
 }
