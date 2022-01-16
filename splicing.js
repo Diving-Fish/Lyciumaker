@@ -21,8 +21,6 @@ function drawNameChar(ctx, char, fontSize, x, y, lm=0, rm=0, tm=0, bm=0, xo=0, y
     tempCtx.fillStyle = "rgb(255, 255, 255)";
     tempCtx.fillText(char, 0, fontSize);
 
-
-
     const sx = fontSize*dpr*lm;
     const sy = fontSize*dpr*tm;
     const sw = fontSize*dpr*(lm+1-rm);
@@ -32,9 +30,6 @@ function drawNameChar(ctx, char, fontSize, x, y, lm=0, rm=0, tm=0, bm=0, xo=0, y
     const dy = y+fontSize*tm + yo*fontSize - fontSize;
     const dh = fontSize*(tm+1-bm+hOffset);
     const dw = fontSize*(lm+1-rm);
-    if(char === "賈"){
-        console.log(sw + " " + sh)
-    }
 
     ctx.drawImage(tempCanvas, sx, sy, sw, sh, dx, dy, dw, dh);
 }

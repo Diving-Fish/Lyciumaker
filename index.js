@@ -41,8 +41,8 @@ let isS2T = true; // 是否简繁转换
 let heartLimit = 4; // 体力上限
 let heartNumber = 4; // 初始体力值（暂未开发相关功能）
 let power = "shu"; // 势力
-let title = "乱世的枭雄"; // 称号
-let name = "刘备"; // 称号
+let title = "未知称号"; // 称号
+let name = "未知武将"; // 武将名
 
 let skillNumber = 2; // 技能数量
 let skills = []; // 所有技能
