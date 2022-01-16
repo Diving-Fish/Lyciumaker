@@ -11,8 +11,6 @@ const zoomInButton = document.getElementById("zoom_in");
 const zoomOutButton = document.getElementById("zoom_out");
 const resetScaleButton = document.getElementById("reset_scale");
 const translateInput = document.getElementById("translateBox");
-const isProducerButton = document.getElementById("isProducer");
-const isIllustratorButton = document.getElementById("isIllustrator");
 const resetHeartLimitButton = document.getElementById("reset_heart_limit");
 const powerSelect = document.getElementById("power_select");
 const scaleNumberInput = document.getElementById("scale_number");
@@ -22,6 +20,13 @@ const heroNameInput = document.getElementById("hero_name");
 const skillNumberInput = document.getElementById("skill_number");
 const s2ttip = document.getElementById("s2ttip");
 
+const isProducerButton = document.getElementById("isProducer");
+let isProducer = false; // 是否绘制制作商
+const isIllustratorButton = document.getElementById("isIllustrator");
+let isIllustrator = false; // 是否绘制画师
+const isCardNumberButton = document.getElementById("isCardNumber");
+let isCardNumber = false; // 是否绘制编号
+
 const sizeName = ['dpr', 'clientWidth', 'clientHeight', 'innerWidth', 'innerHeight',
                     'canvasWidth', 'canvasHeight']
 const size = new Array(sizeName.length);
@@ -30,8 +35,7 @@ let outerFrame; // 外框
 let miscellaneous; // 杂项
 
 let isS2T = true; // 是否简繁转换
-let isProducer = false; // 是否绘制制作商
-let isIllustrator = false; // 是否绘制画师
+
 
 let heartLimit = 4; // 体力上限
 let heartNumber = 4; // 初始体力值（暂未开发相关功能）
@@ -143,8 +147,17 @@ function downloadCard(){
         downloadButtonLock = true;
         // 准备好要发送的数据
         const cardInfo = {};
-        cardInfo['producer'] = "" + document.getElementById("producer").value;
-        cardInfo['illustrator'] = "" + document.getElementById("Illustrator").value;
+        cardInfo['version'] = "" + document.getElementById("AppName").innerText;
+        if(isProducer){
+            cardInfo['producer'] = "" + document.getElementById("producer").value;
+        }
+        if(isIllustrator){
+            cardInfo['illustrator'] = "" + document.getElementById("illustrator").value;
+        }
+        if(isCardNumber){
+            cardInfo['cardNumber'] = "" + document.getElementById("cardNumber").value;
+
+        }
         cardInfo['power'] = "" + power;
         cardInfo['name'] = "" + name;
         cardInfo['heartLimit'] = "" + heartLimit;
@@ -233,24 +246,31 @@ translateInput.onchange = function(){
     }
 }
 
+// 点击按钮切换显示状态
+function switchDisplay(display, element){
+    if(display){
+        element.style = "";
+    }else{
+        element.style = "display: none";
+    }
+}
+
 // 按钮事件：是否显示作者
 isProducerButton.onchange = function(){
     isProducer = isProducerButton.checked;
-    if(isProducer){
-        document.getElementById("producer").style = "";
-    }else{
-        document.getElementById("producer").style = "display: none";
-    }
+    switchDisplay(isProducer, document.getElementById("producer"));
 }
 
 // 按钮事件：是否显示画师
 isIllustratorButton.onchange = function(){
     isIllustrator = isIllustratorButton.checked;
-    if(isIllustrator){
-        document.getElementById("illustrator").style = "";
-    }else{
-        document.getElementById("illustrator").style = "display: none";
-    }
+    switchDisplay(isIllustrator, document.getElementById("illustrator"));
+}
+
+// 按钮事件：是否显示编号
+isCardNumberButton.onchange = function(){
+    isCardNumber = isCardNumberButton.checked;
+    switchDisplay(isCardNumber, document.getElementById("cardNumber"));
 }
 
 // 按钮事件：重置体力上限
@@ -885,10 +905,10 @@ function drawSkill(ctx, skills){
 
 // 绘制底部信息
 function drawBottomInfo(ctx, isProducer, isIllustrator){
-    let str = ""
+    let str = "";
     if(isProducer){
         str += "™&@ " + document.getElementById("producer").value;
-        str += ".  "
+        str += ".  ";
     }
     if(isIllustrator){
         str += "illustration: " + document.getElementById("illustrator").value;
@@ -896,14 +916,22 @@ function drawBottomInfo(ctx, isProducer, isIllustrator){
     ctx.font = "9px FangZhengZhunYuan";
     ctx.fillStyle = 'rgb(0, 0, 0)';
     ctx.fillText(str, 85, 539);
+
+    if(true){
+        str = "" + document.getElementById("cardNumber").value;
+        ctx.textAlign = 'right';
+        ctx.fillText(str, 340, 539);
+    }
+
 }
 
 // 绘制版本信息
 function drawVersionInformation(ctx){
     const drawX = 20;
     const drawY = 553;
+    ctx.textAlign = 'left';
     ctx.font = "8px FangZhengZhunYuan";
-    ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
     const info = "" + document.getElementById("AppName").innerText;
     ctx.fillText(info, drawX, drawY);
 }
