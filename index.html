@@ -10,7 +10,7 @@
 <body>
 <nav id="global_nav">
   <ul id="nav_ul">
-    <li><a href="#" id="AppName">Lycium三国杀卡牌制作器V0.52</a></li>
+    <li><a href="#" id="AppName">Lycium三国杀卡牌制作器V0.53</a></li>
     <li><a href="https://tieba.baidu.com/p/7683167753" target="_blank">反馈建议&分享卡牌</a></li>
     <li><a href="https://github.com/CatScarf/Lyciumaker/tree/master" target="_blank">Github</a></li>
     <li><a href="#" style="display: none">投喂开发者</a></li>
@@ -53,10 +53,17 @@
     <div class="block">
         <div class="verticalBlock">
             <div class="leftDescription">
+                <input type="checkbox" id="isProducer" value="first_checkbox">
+                <label class="description" for="isProducer">作者</label>
+            </div>
+            <input id="producer" class="nearDes" style="display: none" type="text" onfocus="this.select()" value="2022 未知作者">
+        </div>
+        <div class="verticalBlock">
+            <div class="leftDescription">
                 <input type="checkbox" id="isIllustrator" value="first_checkbox">
                 <label class="description" for="isIllustrator">画师</label>
             </div>
-            <input id="Illustrator" class="nearDes" style="display: none" type="text" onfocus="this.select()" value="未知画师">
+            <input id="illustrator" class="nearDes" style="display: none" type="text" onfocus="this.select()" value="未知画师">
         </div>
     </div>
     <div class="block">

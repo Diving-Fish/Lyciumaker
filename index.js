@@ -11,6 +11,7 @@ const zoomInButton = document.getElementById("zoom_in");
 const zoomOutButton = document.getElementById("zoom_out");
 const resetScaleButton = document.getElementById("reset_scale");
 const translateInput = document.getElementById("translateBox");
+const isProducerButton = document.getElementById("isProducer");
 const isIllustratorButton = document.getElementById("isIllustrator");
 const resetHeartLimitButton = document.getElementById("reset_heart_limit");
 const powerSelect = document.getElementById("power_select");
@@ -29,7 +30,9 @@ let outerFrame; // 外框
 let miscellaneous; // 杂项
 
 let isS2T = true; // 是否简繁转换
+let isProducer = false; // 是否绘制制作商
 let isIllustrator = false; // 是否绘制画师
+
 let heartLimit = 4; // 体力上限
 let heartNumber = 4; // 初始体力值（暂未开发相关功能）
 let power = "shu"; // 势力
@@ -141,6 +144,7 @@ function downloadCard(){
         // 准备好要发送的数据
         const cardInfo = {};
         cardInfo['illustrator'] = "" + document.getElementById("Illustrator").value;
+        cardInfo['producer'] = "" + document.getElementById("producer").value;
         cardInfo['power'] = "" + power;
         cardInfo['name'] = "" + name;
         cardInfo['heartLimit'] = "" + heartLimit;
@@ -229,13 +233,23 @@ translateInput.onchange = function(){
     }
 }
 
+// 按钮事件：是否显示作者
+isProducerButton.onchange = function(){
+    isProducer = isProducerButton.checked;
+    if(isProducer){
+        document.getElementById("producer").style = "";
+    }else{
+        document.getElementById("producer").style = "display: none";
+    }
+}
+
 // 按钮事件：是否显示画师
 isIllustratorButton.onchange = function(){
     isIllustrator = isIllustratorButton.checked;
     if(isIllustrator){
-        document.getElementById("Illustrator").style = "";
+        document.getElementById("illustrator").style = "";
     }else{
-        document.getElementById("Illustrator").style = "display: none";
+        document.getElementById("illustrator").style = "display: none";
     }
 }
 
@@ -868,14 +882,20 @@ function drawSkill(ctx, skills){
     return skillBoxY.length > 1 ? skillBoxY[0] : 65534;
 }
 
+
 // 绘制底部信息
-function drawBottomInfo(ctx, isIllustrator){
-    if(isIllustrator){
-        let str = "illustration: " + document.getElementById("Illustrator").value;
-        ctx.font = "9px FangZhengZhunYuan";
-        ctx.fillStyle = 'rgb(0, 0, 0)';
-        ctx.fillText(str, 85, 539);
+function drawBottomInfo(ctx, isProducer, isIllustrator){
+    let str = ""
+    if(isProducer){
+        str += "™&@ " + document.getElementById("producer").value;
+        str += ".  "
     }
+    if(isIllustrator){
+        str += "illustration: " + document.getElementById("illustrator").value;
+    }
+    ctx.font = "9px FangZhengZhunYuan";
+    ctx.fillStyle = 'rgb(0, 0, 0)';
+    ctx.fillText(str, 85, 539);
 }
 
 // 绘制版本信息
@@ -924,7 +944,7 @@ function draw(){
     drawTitleAndName(ctx, title, name, skillTop);
 
     // 绘制底部信息
-    drawBottomInfo(ctx, isIllustrator);
+    drawBottomInfo(ctx, isProducer, isIllustrator);
 
     // 绘制版本信息
     drawVersionInformation(ctx);
