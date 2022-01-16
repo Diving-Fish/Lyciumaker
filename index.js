@@ -1,4 +1,5 @@
 import {convertToTraditional} from "./util.js";
+import {drawName} from "./splicing.js";
 
 const canvas = document.getElementById('card_preview');
 const ctx = canvas.getContext('2d');
@@ -589,20 +590,12 @@ function drawTitleAndName(ctx, title, name, skillTop){
     offset = offset > 57 ? 57 : offset;
     x = power === "shen" ? 355 - offset / 2 : 60 - offset / 2;
     y = nameTopY + Math.floor((nameBottomY - nameTopY) / nameNum / 2.0 + offset * 0.3);
-    ctx.font = offset + "px JinMeiMaoCaoXing";
+
     if(isS2T){
         name = convertToTraditional(name);
     }
     for(let i in name){
-        ctx.fillStyle = "rgb(0, 0, 0)";
-        ctx.fillText(name[i], x, y + 4 + offset * i);
-
-        ctx.strokeStyle = "rgb(0, 0, 0)";
-        ctx.lineWidth = 4;
-        ctx.strokeText(name[i], x, y + offset * i);
-
-        ctx.fillStyle = "rgb(255, 255, 255)";
-        ctx.fillText(name[i], x, y + offset * i);
+        drawName(ctx, name[i], x, offset, y + offset * i)
     }
 }
 
