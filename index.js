@@ -143,8 +143,8 @@ function downloadCard(){
         downloadButtonLock = true;
         // 准备好要发送的数据
         const cardInfo = {};
-        cardInfo['illustrator'] = "" + document.getElementById("Illustrator").value;
         cardInfo['producer'] = "" + document.getElementById("producer").value;
+        cardInfo['illustrator'] = "" + document.getElementById("Illustrator").value;
         cardInfo['power'] = "" + power;
         cardInfo['name'] = "" + name;
         cardInfo['heartLimit'] = "" + heartLimit;
