@@ -917,7 +917,7 @@ function drawBottomInfo(ctx, isProducer, isIllustrator){
     ctx.fillStyle = 'rgb(0, 0, 0)';
     ctx.fillText(str, 85, 539);
 
-    if(true){
+    if(isCardNumber){
         str = "" + document.getElementById("cardNumber").value;
         ctx.textAlign = 'right';
         ctx.fillText(str, 340, 539);
