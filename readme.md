@@ -1,13 +1,16 @@
 # Lycium在线三国杀卡牌制作器
 
-请访问 [Lycium三国杀卡牌制作器](https://lycium-card-maker-8ec4cf5586b107-1253139667.tcloudbaseapp.com/) 以使用本应用。
+请访问 [Lycium三国杀卡牌制作器](https://lycium.com/) 以使用本应用。
 
 仅供学习交流。点个小星星支持一下本项目啦~
+
+## 0.57 更新日志
+
+启用域名lycium.com
 
 ## 0.56 更新日志
 
 武将名增加对以下文字的支持：
-
 邵，诩
 
 ## 0.55 更新日志
