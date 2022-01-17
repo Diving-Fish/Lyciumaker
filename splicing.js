@@ -3,11 +3,12 @@ function drawNameChar(ctx, char, fontSize, x, y, lm=0, rm=0, tm=0, bm=0, xo=0, y
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d');
     let dpr =  window.devicePixelRatio * 2;
-    tempCanvas.width = fontSize * dpr;
-    tempCanvas.height = fontSize * dpr * (1 + hOffset);
+    tempCanvas.width = fontSize * dpr + 1.0;  // 不加1.0 Safari 会绘制失败
+    tempCanvas.height = fontSize * dpr * (1 + hOffset) + 1.0;  // 不加1.0 Safari 会绘制失败
 
     tempCanvas.style.width = fontSize;
     tempCanvas.style.height = fontSize;
+    tempCtx.fillRect(0, 0, 100, 100);
     tempCtx.scale(dpr, dpr)
 
     tempCtx.font = fontSize + "px JinMeiMaoCaoXing";
@@ -20,6 +21,8 @@ function drawNameChar(ctx, char, fontSize, x, y, lm=0, rm=0, tm=0, bm=0, xo=0, y
 
     tempCtx.fillStyle = "rgb(255, 255, 255)";
     tempCtx.fillText(char, 0, fontSize);
+
+    // ctx.fillRect(0, 0, 100, 100);
 
     const sx = fontSize*dpr*lm;
     const sy = fontSize*dpr*tm;
