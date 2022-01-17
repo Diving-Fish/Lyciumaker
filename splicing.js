@@ -8,7 +8,6 @@ function drawNameChar(ctx, char, fontSize, x, y, lm=0, rm=0, tm=0, bm=0, xo=0, y
 
     tempCanvas.style.width = fontSize;
     tempCanvas.style.height = fontSize;
-    tempCtx.fillRect(0, 0, 100, 100);
     tempCtx.scale(dpr, dpr)
 
     tempCtx.font = fontSize + "px JinMeiMaoCaoXing";
