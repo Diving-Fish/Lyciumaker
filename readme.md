@@ -12,7 +12,7 @@
 
 ## 0.57 更新日志
 
-启用域名lycium.com
+启用域名lyciumaker.com
 
 ## 0.56 更新日志
 
