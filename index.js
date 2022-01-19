@@ -284,7 +284,7 @@ function switchDisplay(display, element){
     }
 }
 
-// 按钮事件：是否显示作者
+// 按钮事件：是否显示版权信息（作者）
 isProducerButton.onchange = function(){
     isProducer = isProducerButton.checked;
     switchDisplay(isProducer, document.getElementById("producer"));
@@ -951,13 +951,23 @@ function drawBottomInfo(ctx, isProducer, isIllustrator){
         str += "illustration: " + document.getElementById("illustrator").value;
     }
     ctx.font = "9px FangZhengZhunYuan";
-    ctx.fillStyle = 'rgb(0, 0, 0)';
-    ctx.fillText(str, 85, 539);
+    let leftPos = 85;
+    let rightPos = 340;
+    if(power === "神"){
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        leftPos = 150;
+        rightPos = 370;
+    }else{
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        leftPos = 85;
+        rightPos = 350;
+    }
+    ctx.fillText(str, leftPos, 539);
 
     if(isCardNumber){
         str = "" + document.getElementById("cardNumber").value;
         ctx.textAlign = 'right';
-        ctx.fillText(str, 340, 539);
+        ctx.fillText(str, rightPos, 539);
     }
 
 }
