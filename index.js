@@ -184,6 +184,9 @@ function downloadCard(){
             cardInfo['cardNumber'] = "" + document.getElementById("cardNumber").value;
 
         }
+        if(myLord){
+            cardInfo['myLord'] = "true";
+        }
         cardInfo['power'] = "" + power;
         cardInfo['name'] = "" + name;
         cardInfo['heartLimit'] = "" + heartLimit;
