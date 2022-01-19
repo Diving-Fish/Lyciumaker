@@ -14,6 +14,7 @@ const resetScaleButton = document.getElementById("reset_scale");
 const translateInput = document.getElementById("translateBox");
 const resetHeartLimitButton = document.getElementById("reset_heart_limit");
 const powerSelect = document.getElementById("power_select");
+const myLordButton = document.getElementById('myLord');
 const scaleNumberInput = document.getElementById("scale_number");
 const heartLimitInput = document.getElementById("heart_limit");
 const heroTitleInput = document.getElementById("hero_title");
@@ -32,7 +33,6 @@ const sizeName = ['dpr', 'clientWidth', 'clientHeight', 'innerWidth', 'innerHeig
                     'canvasWidth', 'canvasHeight']
 const size = new Array(sizeName.length);
 let illustration;  // 插画
-let outerFrame; // 外框
 let miscellaneous; // 杂项
 
 let isS2T = true; // 是否简繁转换
@@ -40,7 +40,8 @@ let isS2T = true; // 是否简繁转换
 
 let heartLimit = 4; // 体力上限
 let heartNumber = 4; // 初始体力值（暂未开发相关功能）
-let power = "shu"; // 势力
+let power = ""; // 势力
+let myLord = false; // 是否是主公
 let title = "未知称号"; // 称号
 let name = "未知武将"; // 武将名
 
@@ -54,6 +55,42 @@ let isTouched = false; // 是否触摸Canvas
 let offsetX = 0;  // 拖拽开始时鼠标位置和图片位置的偏移量
 let offsetY = 0;  // 拖拽开始时鼠标位置和图片位置的偏移量
 let dragFirst = true;
+
+// 懒加载图片
+class LazyImage{
+    constructor(path) {
+        this.path = path;
+        this.loading = false;
+        this.img = undefined;
+    }
+    get(){
+        if(this.img){
+            return this.img;
+        }else if(this.loading){
+            return undefined;
+        }else{
+            this.loading = true;
+            this.img = new Image();
+            this.img.src = this.path;
+            this.img.onload = () => {
+                this.loading = false;
+            }
+        }
+    }
+}
+
+// 外框
+class OuterFrame{
+    constructor() {
+        this.frameName = ['old1_wei', 'old1_shu', 'old1_wu', 'old1_qun', 'old1_shen',
+            'old1_wei_zhu', 'old1_shu_zhu', 'old1_wu_zhu', 'old1_qun_zhu'];
+        this.frame = [];
+        for(let name of this.frameName){
+            this.frame[name] = new LazyImage('./resources/' + name + '.png');
+        }
+    }
+}
+const outerFrame = new OuterFrame(); // 外框
 
 // 插画
 class Illustration{
@@ -72,18 +109,6 @@ class Illustration{
         }
         newScale = Math.floor(newScale * 10000)/10000;
         this.scale = newScale;
-    }
-}
-
-// 外框
-class OuterFrame{
-    constructor(wei, shu, wu, qun, shen){
-        this.img = [];
-        this.img["wei"] = wei;
-        this.img["shu"] = shu;
-        this.img["wu"] = wu;
-        this.img["qun"] = qun;
-        this.img["shen"] = shen;
     }
 }
 
@@ -342,16 +367,6 @@ heartLimitInput.onchange = function(){
     heartLimit = value;
 }
 
-// 下拉选框事件：修改势力
-powerSelect.onchange = function (e){
-    const newPower = powerSelect.value;
-    if(newPower === "wei" || newPower === "shu" ||
-        newPower === "wu" || newPower === "qun" ||
-        newPower === "shen"){
-        power = newPower;
-    }
-}
-
 // 禁用默认的触屏滚动
 canvas.addEventListener('touchmove',
     function(e){e.preventDefault();},
@@ -428,34 +443,39 @@ function setCanvasSize(canvas){
     return [logicalWidth, logicalHeight];
 }
 
-// 导入外框
-function importOuterFrame(type){
-    if(type === "old1"){
-        const imgName = ["wei", "shu", "wu", "qun", "shen"];
-        let imgArray = new Array(imgName.length);
-        let cnt = 0;
-        for(let i in imgName){
-            imgArray[i] = new Image();
-            imgArray[i].src = "./resources/old1_" + imgName[i] + ".png";
-            imgArray[i].onload = function(){
-                cnt += 1;
-                if(cnt >= imgName.length){
-                    outerFrame = new OuterFrame(imgArray[0], imgArray[1], imgArray[2], imgArray[3], imgArray[4]);
-                }
-            }
-        }
-    }
-}
 
 // 绘制外框
-function drawOuterFrame(ctx, power, outerFrame, logicalWidth, logicalHeight){
-    if(typeof(outerFrame) != "undefined"){
-        const img = outerFrame.img[power];
-        const drawWidth = logicalWidth * 1.0;
-        const drawHeight = drawWidth * img.height / img.width;
-        const drawX = 0;
-        const drawY = 0;
-        ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+function drawOuterFrame(ctx, power, myLord, outerFrame, logicalWidth, logicalHeight){
+    if(outerFrame){
+        let img = undefined;
+        if(power === "魏" && myLord){
+            img =  outerFrame.frame['old1_wei_zhu'].get();
+        }else if(power === "魏" && !myLord){
+            img =  outerFrame.frame['old1_wei'].get();
+        }else if(power === "蜀" && myLord){
+            img =  outerFrame.frame['old1_shu_zhu'].get();
+        }else if(power === "蜀" && !myLord){
+            img =  outerFrame.frame['old1_shu'].get();
+        }else if(power === "吴" && myLord){
+            img =  outerFrame.frame['old1_wu_zhu'].get();
+        }else if(power === "吴" && !myLord){
+            img =  outerFrame.frame['old1_wu'].get();
+        }else if(power === "群" && myLord){
+            img =  outerFrame.frame['old1_qun_zhu'].get();
+        }else if(power === "群" && !myLord){
+            img =  outerFrame.frame['old1_qun'].get();
+        }else if(power === "神"){
+            img =  outerFrame.frame['old1_shen'].get();
+        }else{
+            console.error("没有对应的势力！");
+        }
+        if(img){
+            const drawWidth = logicalWidth * 1.0;
+            const drawHeight = drawWidth * img.height / img.width;
+            const drawX = 0;
+            const drawY = 0;
+            ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+        }
     }
 }
 
@@ -520,16 +540,18 @@ function drawHeartLimit(type, power, heartLimit, heartNumber){
     if(type === "old"){
         if(typeof(miscellaneous) != "undefined"){
             let S;
-            if(power === "wei"){
-                S = miscellaneous.weiHeartS;
-            }else if(power === "shu"){
-                S = miscellaneous.shuHeartS;
-            }else if(power === "wu"){
-                S = miscellaneous.wuHeartS;
-            }else if(power === "qun"){
-                S = miscellaneous.qunHeartS;
-            }else if(power === "shen"){
+            if(power === "神" || myLord){
                 S = miscellaneous.shenHeartS;
+            }else if(power === "魏"){
+                S = miscellaneous.weiHeartS;
+            }else if(power === "蜀"){
+                S = miscellaneous.shuHeartS;
+            }else if(power === "吴"){
+                S = miscellaneous.wuHeartS;
+            }else if(power === "群"){
+                S = miscellaneous.qunHeartS;
+            }else{
+                console.error("没有对应的势力！");
             }
             if(typeof(S) != "undefined"){
                 for(let i=0; i < heartLimit; i++){
@@ -540,7 +562,7 @@ function drawHeartLimit(type, power, heartLimit, heartNumber){
     }
 }
 
-// 绘制称号和姓名
+// 绘制称号和武将名
 function drawTitleAndName(ctx, title, name, skillTop){
     let titleNum = 0;
     for(let i of title){
@@ -552,7 +574,7 @@ function drawTitleAndName(ctx, title, name, skillTop){
     }
 
     skillTop -= 16;
-    let ratio = 0.5; // 称号与姓名的比例
+    let ratio = 0.5; // 称号与武将名的比例
     if(nameNum > 3){
         ratio = 0.35
     }
@@ -566,7 +588,7 @@ function drawTitleAndName(ctx, title, name, skillTop){
     let offset = Math.floor((titleBottomY - titleTopY) / titleNum);
     offset *= 0.9
     offset = offset > 24 ? 24 : offset;
-    let x = power === "shen" ? 355 - offset / 2 : 61 - offset / 2;
+    let x = power === "神" ? 355 - offset / 2 : 61 - offset / 2;
     let y = titleTopY + Math.floor((titleBottomY - titleTopY)*1.0 / titleNum / 2.0 + offset/2.0);
     ctx.font = offset + "px DFNewChuan";
     const lineWidth =2.5; // 称号描边宽度
@@ -578,17 +600,31 @@ function drawTitleAndName(ctx, title, name, skillTop){
         ctx.lineWidth = lineWidth;
         ctx.strokeText(title[i], x, y + offset * i);
 
-        ctx.fillStyle = "rgb(255, 255, 0)";
+        if(myLord){
+            if(power === "魏"){
+                ctx.fillStyle = 'rgb(41,88,155)';
+            }else if(power === "蜀"){
+                ctx.fillStyle = 'rgb(175,98,36)';
+            }else if(power === "吴"){
+                ctx.fillStyle = 'rgb(62,109,31)';
+            }else if(power === "群"){
+                ctx.fillStyle = 'rgb(118,118,118)';
+            }else{
+                console.error("势力\"" + power + "\"不存在主公！");
+            }
+        }else{
+            ctx.fillStyle = "rgb(255, 255, 0)";
+        }
         ctx.fillText(title[i], x, y + offset * i);
     }
 
-    // 绘制名字
+    // 绘制武将名
     offset = Math.floor((nameBottomY - nameTopY) / nameNum);
     if(nameNum <= 2){
         offset *= 0.85;
     }
     offset = offset > 57 ? 57 : offset;
-    x = power === "shen" ? 355 - offset / 2 : 60 - offset / 2;
+    x = power === "神" ? 355 - offset / 2 : 60 - offset / 2;
     y = nameTopY + Math.floor((nameBottomY - nameTopY) / nameNum / 2.0 + offset * 0.3);
 
     if(isS2T){
@@ -613,8 +649,13 @@ function dragIllustration(){
     }
 }
 
-// 刷新技能名与技能内容
+// 刷新内容
 function refreshAll(){
+    // 刷新势力名
+    power = powerSelect.value;
+    // 刷新是否为主公
+    myLord = power === '神' ? false : myLordButton.checked;
+
     skills = []; // 清空技能列表
     for(let i = 0; i < skillNumber; i++){
         const skn = document.getElementById("sk" + (i+1) + "n");
@@ -780,21 +821,21 @@ function drawSkill(ctx, skills){
     // 第二次遍历，获取顶部位置
     iterationText(false);
 
-    // 绘制外框
+    // 绘制技能底框
     if(typeof(skillBoxY[0]) != "undefined"){
         const alpha = 0.8;
         ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
         if(typeof(miscellaneous) != "undefined"){
             let color;
-            if(power === "wei"){
+            if(power === "魏"){
                 color = miscellaneous.weiColor;
-            }else if(power === "shu"){
+            }else if(power === "蜀"){
                 color = miscellaneous.shuColor;
-            }else if(power === "wu"){
+            }else if(power === "吴"){
                 color = miscellaneous.wuColor;
-            }else if(power === "qun"){
+            }else if(power === "群"){
                 color = miscellaneous.qunColor;
-            }else if(power === "shen"){
+            }else if(power === "神"){
                 color = miscellaneous.shenColor;
             }
             let r = color.substr(1, 2);
@@ -865,19 +906,19 @@ function drawSkill(ctx, skills){
         for(let i in skillBoxY){
             const length = 68;
             let S;
-            if(power === "wei"){
+            if(power === "魏"){
                 S = miscellaneous.weiSkillBox;
-            }else if(power === "shu"){
+            }else if(power === "蜀"){
                 S = miscellaneous.shuSkillBox;
-            }else if(power === "wu"){
+            }else if(power === "吴"){
                 S = miscellaneous.wuSkillBox;
-            }else if(power === "qun"){
+            }else if(power === "群"){
                 S = miscellaneous.qunSkillBox;
-            }else if(power === "shen"){
+            }else if(power === "神"){
                 S = miscellaneous.shenSkillBox;
             }
 
-            if(power === "shen"){
+            if(power === "神"){
                 ctx.fillStyle = "rgb(239, 227, 111)"
             }else{
                 ctx.fillStyle = "rgb(0, 0, 0)"
@@ -952,7 +993,7 @@ function draw(){
 
     // 绘制外框
     if(typeof(outerFrame) != "undefined"){
-        drawOuterFrame(ctx, power, outerFrame, logicalWidth, logicalHeight);
+        drawOuterFrame(ctx, power, myLord, outerFrame, logicalWidth, logicalHeight);
     }
 
     // 绘制体力
@@ -974,6 +1015,5 @@ function draw(){
 }
 
 draw();
-importOuterFrame("old1");
 importIllustration("./resources/刘备-六星耀帝.png");
 importMiscellaneous();
