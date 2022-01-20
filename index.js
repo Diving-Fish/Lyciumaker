@@ -12,11 +12,16 @@ const zoomInButton = document.getElementById("zoom_in");
 const zoomOutButton = document.getElementById("zoom_out");
 const resetScaleButton = document.getElementById("reset_scale");
 const translateInput = document.getElementById("translateBox");
-const resetHeartLimitButton = document.getElementById("reset_heart_limit");
 const powerSelect = document.getElementById("power_select");
 const myLordButton = document.getElementById('myLord');
 const scaleNumberInput = document.getElementById("scale_number");
+
+// 体力值与体力上限
+const heartInput = document.getElementById('heart');
 const heartLimitInput = document.getElementById("heart_limit");
+const isHeartLimitButton = document.getElementById("isHeartLimit");
+let isHeartLimit = false; // 是否绘制空血
+
 const heroTitleInput = document.getElementById("hero_title");
 const heroNameInput = document.getElementById("hero_name");
 const skillNumberInput = document.getElementById("skill_number");
@@ -37,9 +42,8 @@ let miscellaneous; // 杂项
 
 let isS2T = true; // 是否简繁转换
 
-
+let heart = 4;  // 体力值
 let heartLimit = 4; // 体力上限
-let heartNumber = 4; // 初始体力值（暂未开发相关功能）
 let power = ""; // 势力
 let myLord = false; // 是否是主公
 let title = "未知称号"; // 称号
@@ -123,6 +127,12 @@ class Miscellaneous{
         this.qunHeartS  = [350, 350, 100, 100];
         this.shenHeartS = [350, 450, 100, 100];
         this.jinHeartS = [350, 550, 100, 100];
+        this.weiHeartLimitS  = [450, 50,  100, 100];
+        this.shuHeartLimitS  = [450, 150, 100, 100];
+        this.wuHeartLimitS   = [450, 250, 100, 100];
+        this.qunHeartLimitS  = [450, 350, 100, 100];
+        this.shenHeartLimitS = [450, 450, 100, 100];
+        this.jinHeartLimitS = [450, 550, 100, 100];
 
         this.weiSkillBox  = [100, 50, 200, 100];
         this.shuSkillBox  = [100, 150, 200, 100];
@@ -305,12 +315,6 @@ isCardNumberButton.onchange = function(){
     switchDisplay(isCardNumber, document.getElementById("cardNumber"));
 }
 
-// 按钮事件：重置体力上限
-resetHeartLimitButton.onclick = function(){
-    heartLimit = 4;
-    heartLimitInput.value = 4;
-}
-
 // 输入框事件：更改技能数量
 skillNumberInput.onchange = function(){
     const editor = document.getElementById("editor");
@@ -363,12 +367,41 @@ scaleNumberInput.onchange = function(){
     }
 }
 
+// 输入框事件：修改体力值
+heartInput.onchange = function(){
+    let value = Math.floor(heartInput.value);
+    value = value < 1 ? 1 : value;
+    value = value > 100 ? 100 : value;
+    if(!isHeartLimit || value > heartLimit){
+        heartLimit = value;
+        heartLimitInput.value = value;
+    }
+    heartInput.value = value;
+    heart = value;
+}
+
+// 按钮事件：是否显示空血
+isHeartLimitButton.onchange = () => {
+    if(isHeartLimitButton.checked){
+        isHeartLimit = true;
+        document.getElementById('heartLimitVBlock').style = "";
+    }else{
+        isHeartLimit = false;
+        heartLimit = heart;
+        document.getElementById('heartLimitVBlock').style = "display: none";
+    }
+}
+
 // 输入框事件：修改体力上限
 heartLimitInput.onchange = function(){
-    let value = heartLimitInput.value;
+    let value = Math.floor(heartLimitInput.value);
     value = Math.floor(value);
     value = value < 1 ? 1 : value;
     value = value > 100 ? 100 : value;
+    if(value < heart){
+        heart = value;
+        heartInput.value = value;
+    }
     heartLimitInput.value = value;
     heartLimit = value;
 }
@@ -535,39 +568,45 @@ function drawIllustration(ctx, illustration, logicalWidth, logicalHeight){
 }
 
 // 绘制体力与体力上限
-function drawHeartLimit(type, power, heartLimit, heartNumber){
+function drawHeartLimit(type, power, heartLimit, heart){
     const length = 40;
     const dx = 100;
     const dy = 15;
     let offset = 20;
     const maxHeartNumber = 12;
-    heartLimit = Math.floor(heartLimit);
-    heartLimit = heartLimit < 1 ? 1 : heartLimit;
-    heartLimit = heartLimit > 100 ? 100 : heartLimit;
     if(heartLimit >= maxHeartNumber){
         offset = 20 * (maxHeartNumber - 1) / (heartLimit - 1);
     }
     if(type === "old"){
-        if(typeof(miscellaneous) != "undefined"){
-            let S;
+        if(miscellaneous){
+            let S1, S2;
             if(power === "神" || myLord){
-                S = miscellaneous.shenHeartS;
+                S1 = miscellaneous.shenHeartS;
+                S2 = miscellaneous.shenHeartLimitS;
             }else if(power === "魏"){
-                S = miscellaneous.weiHeartS;
+                S1 = miscellaneous.weiHeartS;
+                S2 = miscellaneous.weiHeartLimitS;
             }else if(power === "蜀"){
-                S = miscellaneous.shuHeartS;
+                S1 = miscellaneous.shuHeartS;
+                S2 = miscellaneous.shuHeartLimitS;
             }else if(power === "吴"){
-                S = miscellaneous.wuHeartS;
+                S1 = miscellaneous.wuHeartS;
+                S2 = miscellaneous.wuHeartLimitS;
             }else if(power === "群"){
-                S = miscellaneous.qunHeartS;
+                S1 = miscellaneous.qunHeartS;
+                S2 = miscellaneous.qunHeartLimitS;
             }else if(power === "晋"){
-                S = miscellaneous.jinHeartS;
+                S1 = miscellaneous.jinHeartS;
+                S2 = miscellaneous.jinHeartLimitS;
             }else{
                 console.error("没有对应的势力！");
             }
-            if(typeof(S) != "undefined"){
-                for(let i=0; i < heartLimit; i++){
-                    ctx.drawImage(miscellaneous.img, S[0], S[1], S[2], S[3], dx+offset*i, dy, length, length);
+            if(S1 && S2){
+                for(let i = 0; i < heart; i++){
+                    ctx.drawImage(miscellaneous.img, S1[0], S1[1], S1[2], S1[3], dx+offset*i, dy, length, length);
+                }
+                for(let i = heart; i < heartLimit; i++){
+                    ctx.drawImage(miscellaneous.img, S2[0], S2[1], S2[2], S2[3], dx+offset*i, dy, length, length);
                 }
             }
         }
@@ -1031,7 +1070,7 @@ function draw(){
     }
 
     // 绘制体力
-    drawHeartLimit("old", power, heartLimit, heartNumber);
+    drawHeartLimit("old", power, heartLimit, heart);
 
     // 绘制技能
     let skillTop = drawSkill(ctx, skills);

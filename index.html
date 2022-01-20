@@ -12,7 +12,7 @@
 <body>
 <nav id="global_nav">
   <ul id="nav_ul">
-    <li><a class="barText" href="#" id="AppName">Lycium在线三国杀卡牌制作器V0.59</a></li>
+    <li><a class="barText" href="#" id="AppName">Lycium在线三国杀卡牌制作器V0.60</a></li>
     <li><a class="barText" href="https://www.bilibili.com/video/BV19P4y1j7n6/" target="_blank">反馈建议</a></li>
     <li><a class="barText" href="https://github.com/CatScarf/Lyciumaker/tree/master" target="_blank">Github</a></li>
     <li><a class="barText" href="#" style="display: none">投喂开发者</a></li>
@@ -110,9 +110,16 @@
     </div>
     <div class="block">
         <div class="verticalBlock">
+            <div class="description leftDescription">体力值</div>
+            <input id="heart" type="number" value="4" onfocus="this.select()">
+        </div>
+        <div class="verticalBlock">
+            <input type="checkbox" id="isHeartLimit" value="first_checkbox">
+            <label class="description" for="isHeartLimit">体力值与体力上限不等</label>
+        </div>
+        <div class="verticalBlock" id="heartLimitVBlock" style="display: none">
             <div class="description leftDescription">体力上限</div>
             <input id="heart_limit" type="number" value="4" onfocus="this.select()">
-            <button id="reset_heart_limit">重置</button>
         </div>
     </div>
     <div class="block">
