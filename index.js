@@ -198,11 +198,14 @@ function downloadCard(){
 
         }
         if(myLord){
-            cardInfo['myLord'] = "true";
+            cardInfo['myLord'] = "主公";
         }
         cardInfo['power'] = "" + power;
         cardInfo['name'] = "" + name;
-        cardInfo['heartLimit'] = "" + heartLimit;
+        cardInfo['heart'] = "" + heart;
+        if(isHeartLimit){
+            cardInfo['heartLimit'] = "" + heartLimit;
+        }
         cardInfo['title'] = "" + title;
         cardInfo['skillNumber'] = "" + skillNumber;
         for(let i=0; i < skillNumber; i++){
