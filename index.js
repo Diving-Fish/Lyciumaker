@@ -1,5 +1,6 @@
 import {convertToTraditional} from "./util.js";
 import {drawName} from "./splicing.js";
+import {drawSkillText} from "./text.js";
 
 const canvas = document.getElementById('card_preview');
 const ctx = canvas.getContext('2d');
@@ -781,19 +782,14 @@ function drawSkill(ctx, skills){
             xOffset = skillTextDrawingAttr.skillWidth / (lineCharNum - 1);
         }
 
-        // 逐字绘制
-        let italicStr = "";
-        if(italic){
-            italicStr = "Italic "
-        }
-
         for(let k in lineString){
+            let charBold = false;
             if(firstLine && bold && k < 3){
-                ctx.font = italicStr + "bold " + skillTextDrawingAttr.fontSize + "px FangZhengZhunYuan"
+                charBold = true;
             }else{
-                ctx.font = italicStr + "" + skillTextDrawingAttr.fontSize + "px FangZhengZhunYuan"
+                charBold = false;
             }
-            ctx.fillText(lineString[k], cur, skillTextDrawingAttr.sillTopY + skillTextDrawingAttr.yOffset * line + i * skillTextDrawingAttr.yOffset * skillTextDrawingAttr.paragraphSpacing);
+            drawSkillText(ctx, lineString[k], skillTextDrawingAttr.fontSize, charBold, italic, cur, skillTextDrawingAttr.sillTopY + skillTextDrawingAttr.yOffset * line + i * skillTextDrawingAttr.yOffset * skillTextDrawingAttr.paragraphSpacing);
             cur += lineString[k].charCodeAt(0) > 255 ? 2 * xOffset : 1 * xOffset;
         }
     }
@@ -818,7 +814,7 @@ function drawSkill(ctx, skills){
             // 绘制每个技能
             for(let j in skills[i].text){
                 const char = skills[i].text[j];
-                if(draw){
+                if(draw && char.charCodeAt(0) != 65039){  // 忽略变体选择符
                     lineString.push(char);
                 }
                 cur += char.charCodeAt(0) > 255 ? skillTextDrawingAttr.fontSize : skillTextDrawingAttr.fontSize/2;
