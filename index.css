@@ -1,3 +1,7 @@
+body{
+    font-family: "SF Pro SC","SF Pro Text","SF Pro Icons","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif;
+}
+
 #cardAndEditor{
     display: flex;
     justify-content: center;

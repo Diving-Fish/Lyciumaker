@@ -214,7 +214,7 @@ function downloadCard(){
             cardInfo['skill' + (i+1)] = skills[i].text;
         }
 
-        let cardJson = JSON.stringify(cardInfo)
+        let cardJson = JSON.stringify(cardInfo);
         let timeStamp = new Date().getTime();
 
         // 发送
