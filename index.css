@@ -91,6 +91,18 @@ textarea{
     width: 300px;
 }
 
+#bottomBar{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.bottomInfo{
+    color:#666;
+    font-size:12px;
+    text-decoration:none;
+}
+
 @font-face {
     font-family: "DFNewChuan";
     src: url("./font/DFNewChuan_Md_HK_BF.ttf") format('truetype');
