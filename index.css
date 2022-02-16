@@ -95,12 +95,15 @@ textarea{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    height:20px;
 }
 
 .bottomInfo{
     color:#666;
     font-size:12px;
     text-decoration:none;
+    height: 20px;
+    line-height: 20px;
 }
 
 @font-face {
