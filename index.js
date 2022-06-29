@@ -12,6 +12,7 @@ const importIllustrationInput = document.getElementById("import_illustration");
 const zoomInButton = document.getElementById("zoom_in");
 const zoomOutButton = document.getElementById("zoom_out");
 const resetScaleButton = document.getElementById("reset_scale");
+const newUIInput = document.getElementById("useNewUIBox");
 const translateInput = document.getElementById("translateBox");
 const powerSelect = document.getElementById("power_select");
 const myLordButton = document.getElementById('myLord');
@@ -41,6 +42,8 @@ const size = new Array(sizeName.length);
 let illustration;  // 插画
 let miscellaneous; // 杂项
 
+let useNewUI = true; // 是否使用新 UI
+
 let isS2T = true; // 是否简繁转换
 
 let heart = 4;  // 体力值
@@ -60,6 +63,9 @@ let isTouched = false; // 是否触摸Canvas
 let offsetX = 0;  // 拖拽开始时鼠标位置和图片位置的偏移量
 let offsetY = 0;  // 拖拽开始时鼠标位置和图片位置的偏移量
 let dragFirst = true;
+
+let bottomLine = new Image();
+bottomLine.src = "./resources/bottom_line.png"
 
 // 懒加载图片
 class LazyImage{
@@ -88,7 +94,8 @@ class LazyImage{
 class OuterFrame{
     constructor() {
         this.frameName = ['old1_wei', 'old1_shu', 'old1_wu', 'old1_qun', 'old1_shen', 'old1_jin',
-            'old1_wei_zhu', 'old1_shu_zhu', 'old1_wu_zhu', 'old1_qun_zhu', 'old1_jin_zhu'];
+            'old1_wei_zhu', 'old1_shu_zhu', 'old1_wu_zhu', 'old1_qun_zhu', 'old1_jin_zhu',
+            'new_wei', 'new_shu', 'new_wu', 'new_qun', 'new_wei_zhu', 'new_shu_zhu', 'new_wu_zhu', 'new_qun_zhu', 'new_jin', 'new_jin_zhu', 'new_shen'];
         this.frame = [];
         for(let name of this.frameName){
             this.frame[name] = new LazyImage('./resources/' + name + '.png');
@@ -274,6 +281,13 @@ resetScaleButton.onclick = function(){
         illustration.y = 0;
         illustration.scale = 1.0;
     }
+}
+
+// 按钮事件：是否使用新 UI
+newUIInput.onchange = function() {
+    useNewUI = newUIInput.checked;
+    miscellaneous = undefined;
+    importMiscellaneous();
 }
 
 // 按钮事件：是否简繁转换
@@ -473,9 +487,9 @@ function setCanvasSize(canvas){
     const ctx = canvas.getContext('2d');
     const clientWidth = document.body.clientWidth;
     const logicalWidth = 400;
-    const logicalHeight = logicalWidth * (88/63);
+    const logicalHeight = logicalWidth * (useNewUI ? (806/560) : (88/63));
     const styleWidth = Math.min(400, clientWidth);
-    const styleHeight = styleWidth * (88/63);
+    const styleHeight = styleWidth * (useNewUI ? (806/560) : (88/63));
 
     canvas.width = logicalWidth * dpr;
     canvas.height = logicalHeight * dpr;
@@ -491,30 +505,58 @@ function setCanvasSize(canvas){
 function drawOuterFrame(ctx, power, myLord, outerFrame, logicalWidth, logicalHeight){
     if(outerFrame){
         let img = undefined;
-        if(power === "魏" && myLord){
-            img =  outerFrame.frame['old1_wei_zhu'].get();
-        }else if(power === "魏" && !myLord){
-            img =  outerFrame.frame['old1_wei'].get();
-        }else if(power === "蜀" && myLord){
-            img =  outerFrame.frame['old1_shu_zhu'].get();
-        }else if(power === "蜀" && !myLord){
-            img =  outerFrame.frame['old1_shu'].get();
-        }else if(power === "吴" && myLord){
-            img =  outerFrame.frame['old1_wu_zhu'].get();
-        }else if(power === "吴" && !myLord){
-            img =  outerFrame.frame['old1_wu'].get();
-        }else if(power === "群" && myLord){
-            img =  outerFrame.frame['old1_qun_zhu'].get();
-        }else if(power === "群" && !myLord){
-            img =  outerFrame.frame['old1_qun'].get();
-        }else if(power === "晋" && myLord){
-            img =  outerFrame.frame['old1_jin_zhu'].get();
-        }else if(power === "晋" && !myLord){
-            img =  outerFrame.frame['old1_jin'].get();
-        }else if(power === "神"){
-            img =  outerFrame.frame['old1_shen'].get();
-        }else{
-            console.error("没有对应的势力！");
+        if (useNewUI) {
+            if(power === "魏" && myLord){
+                img =  outerFrame.frame['new_wei_zhu'].get();
+            }else if(power === "魏" && !myLord){
+                img =  outerFrame.frame['new_wei'].get();
+            }else if(power === "蜀" && myLord){
+                img =  outerFrame.frame['new_shu_zhu'].get();
+            }else if(power === "蜀" && !myLord){
+                img =  outerFrame.frame['new_shu'].get();
+            }else if(power === "吴" && myLord){
+                img =  outerFrame.frame['new_wu_zhu'].get();
+            }else if(power === "吴" && !myLord){
+                img =  outerFrame.frame['new_wu'].get();
+            }else if(power === "群" && myLord){
+                img =  outerFrame.frame['new_qun_zhu'].get();
+            }else if(power === "群" && !myLord){
+                img =  outerFrame.frame['new_qun'].get();
+            }else if(power === "晋" && myLord){
+                img =  outerFrame.frame['new_jin_zhu'].get();
+            }else if(power === "晋" && !myLord){
+                img =  outerFrame.frame['new_jin'].get();
+            }else if(power === "神"){
+                img =  outerFrame.frame['new_shen'].get();
+            }else{
+                console.error("没有对应的势力！");
+            }
+        } else {
+            if(power === "魏" && myLord){
+                img =  outerFrame.frame['old1_wei_zhu'].get();
+            }else if(power === "魏" && !myLord){
+                img =  outerFrame.frame['old1_wei'].get();
+            }else if(power === "蜀" && myLord){
+                img =  outerFrame.frame['old1_shu_zhu'].get();
+            }else if(power === "蜀" && !myLord){
+                img =  outerFrame.frame['old1_shu'].get();
+            }else if(power === "吴" && myLord){
+                img =  outerFrame.frame['old1_wu_zhu'].get();
+            }else if(power === "吴" && !myLord){
+                img =  outerFrame.frame['old1_wu'].get();
+            }else if(power === "群" && myLord){
+                img =  outerFrame.frame['old1_qun_zhu'].get();
+            }else if(power === "群" && !myLord){
+                img =  outerFrame.frame['old1_qun'].get();
+            }else if(power === "晋" && myLord){
+                img =  outerFrame.frame['old1_jin_zhu'].get();
+            }else if(power === "晋" && !myLord){
+                img =  outerFrame.frame['old1_jin'].get();
+            }else if(power === "神"){
+                img =  outerFrame.frame['old1_shen'].get();
+            }else{
+                console.error("没有对应的势力！");
+            }
         }
         if(img){
             const drawWidth = logicalWidth * 1.0;
@@ -538,7 +580,7 @@ function importIllustration(path){
 // 导入杂项
 function importMiscellaneous(path){
     if(typeof(miscellaneous) == "undefined"){
-        const path = "./resources/miscellaneous.png";
+        const path = useNewUI ? "./resources/miscellaneous_new.png" : "./resources/miscellaneous.png";
         const img = new Image();
         img.src = path;
         img.onload = function(){
@@ -574,8 +616,13 @@ function drawIllustration(ctx, illustration, logicalWidth, logicalHeight){
 // 绘制体力与体力上限
 function drawHeartLimit(type, power, heartLimit, heart){
     const length = 40;
-    const dx = 100;
-    const dy = 15;
+    let dx = 0;
+    if (useNewUI) {
+        dx = (power === "神") ? 75 : 70;
+    } else {
+        dx = 100;
+    }
+    const dy = (useNewUI && power === "神") ? 20 : 15;
     let offset = 20;
     const maxHeartNumber = 12;
     if(heartLimit >= maxHeartNumber){
@@ -643,7 +690,15 @@ function drawTitleAndName(ctx, title, name, skillTop){
     let offset = Math.floor((titleBottomY - titleTopY) / titleNum);
     offset *= 0.9
     offset = offset > 24 ? 24 : offset;
-    let x = power === "神" ? 355 - offset / 2 : 61 - offset / 2;
+    let x = 0;
+    if (power === "神") {
+        x = 355 - offset / 2;
+    } else {
+        x = 61 - offset / 2;
+        if (useNewUI) {
+            x -= 20
+        }
+    }
     let y = titleTopY + Math.floor((titleBottomY - titleTopY)*1.0 / titleNum / 2.0 + offset/2.0);
     ctx.font = offset + "px DFNewChuan";
     const lineWidth =2.5; // 称号描边宽度
@@ -681,7 +736,15 @@ function drawTitleAndName(ctx, title, name, skillTop){
         offset *= 0.85;
     }
     offset = offset > 57 ? 57 : offset;
-    x = power === "神" ? 355 - offset / 2 : 60 - offset / 2;
+    x = 0;
+    if (power === "神") {
+        x = 355 - offset / 2;
+    } else {
+        x = 60 - offset / 2;
+        if (useNewUI) {
+            x -= 20
+        }
+    }
     y = nameTopY + Math.floor((nameBottomY - nameTopY) / nameNum / 2.0 + offset * 0.3);
 
     if(isS2T){
@@ -740,6 +803,21 @@ function drawSkill(ctx, skills){
     // 与绘制技能有关的所有属性
     class SkillTextDrawingAttr{
         constructor() {
+            if (useNewUI) {
+                this.skillTopX = 104;  // 技能区最顶部的X坐标
+                this.skillTopMinY = 435; // 技能区最顶部的Y坐标不得低于此值
+                this.sillTopY = this.skillTopMinY; // 技能区最顶部的Y坐标
+                this.skillBottomY = 520; // 技能区最底部的Y坐标
+
+                this.maxHeight = (this.skillBottomY - this.sillTopY) * 3;  // 技能区最大高度
+                this.skillWidth = (power === "神") ? 240 : 288;  // 技能区宽度
+                this.indent = 0.0; // 首字缩进为0.25个汉字宽度
+                this.paragraphSpacing = 0.3;  // 段间距，实际段间距为此值*yOffset
+
+                this.fontSize = 13;  // 技能字号
+                this.yOffset = this.fontSize * 1.3;  // 行间距，当字体缩小时变为与字体大小相同
+                return;
+            }
             this.skillTopX = 104;  // 技能区最顶部的X坐标
             this.skillTopMinY = 435; // 技能区最顶部的Y坐标不得低于此值
             this.sillTopY = this.skillTopMinY; // 技能区最顶部的Y坐标
@@ -781,7 +859,10 @@ function drawSkill(ctx, skills){
         else{
             xOffset = skillTextDrawingAttr.skillWidth / (lineCharNum - 1);
         }
-
+        if (useNewUI) {
+            if (power === "神") cur -= 1;
+            else cur -= 20;
+        } 
         for(let k in lineString){
             let charBold = false;
             if(firstLine && bold && k < 3){
@@ -874,87 +955,152 @@ function drawSkill(ctx, skills){
     iterationText(false);
 
     // 绘制技能底框
-    if(typeof(skillBoxY[0]) != "undefined"){
-        const alpha = 0.8;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        if(typeof(miscellaneous) != "undefined"){
-            let color;
-            if(power === "魏"){
-                color = miscellaneous.weiColor;
-            }else if(power === "蜀"){
-                color = miscellaneous.shuColor;
-            }else if(power === "吴"){
-                color = miscellaneous.wuColor;
-            }else if(power === "群"){
-                color = miscellaneous.qunColor;
-            }else if(power === "神"){
-                color = miscellaneous.shenColor;
-            }else if(power === "晋"){
-                color = miscellaneous.jinColor;
-            }else{
-                color = miscellaneous.qunColor;
-                console.error("不存在势力\"" + power + "\"对应的技能框颜色");
+    if (useNewUI) {
+        if(typeof(skillBoxY[0]) != "undefined"){
+            ctx.fillStyle = (myLord || power === "神") ? 'rgba(255, 249, 204, 0.8)' : 'rgba(255, 255, 255, 0.77)';
+            if (power === "神") {
+                ctx.strokeStyle = 'rgba(255, 249, 204, 0.9)';
+                const drawX = 40;
+                const drawY = skillBoxY[0] - 18;
+                const drawWidth = 320;
+                const drawHeight = 530 - drawY;
+                const corner = 0;
+                const margin = 3;
+                ctx.beginPath();
+                ctx.moveTo(drawX, drawY + corner);
+                ctx.lineTo(drawX + corner, drawY + corner);
+                ctx.lineTo(drawX + corner, drawY);
+        
+                ctx.lineTo(drawX + drawWidth - corner, drawY);
+                ctx.lineTo(drawX + drawWidth - corner, drawY + corner);
+                ctx.lineTo(drawX + drawWidth, drawY + corner);
+        
+                ctx.lineTo(drawX + drawWidth, drawY + drawHeight - corner);
+                ctx.lineTo(drawX + drawWidth - corner, drawY + drawHeight - corner);
+                ctx.lineTo(drawX + drawWidth - corner, drawY + drawHeight);
+        
+                ctx.lineTo(drawX + corner, drawY + drawHeight);
+                ctx.lineTo(drawX + corner, drawY + drawHeight - corner);
+                ctx.lineTo(drawX, drawY + drawHeight - corner);
+        
+                ctx.lineTo(drawX, drawY + corner);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.closePath();
+        
+                ctx.beginPath();
+                ctx.moveTo(drawX + margin, drawY + corner + margin);
+                ctx.lineTo(drawX + corner + margin, drawY + corner + margin);
+                ctx.lineTo(drawX + corner + margin, drawY + margin);
+        
+                ctx.lineTo(drawX + drawWidth - corner - margin, drawY + margin);
+                ctx.lineTo(drawX + drawWidth - corner - margin, drawY + corner + margin);
+                ctx.lineTo(drawX + drawWidth - margin, drawY + corner + margin);
+        
+                ctx.lineTo(drawX + drawWidth - margin, drawY + drawHeight - corner - margin);
+                ctx.lineTo(drawX + drawWidth - corner - margin, drawY + drawHeight - corner - margin);
+                ctx.lineTo(drawX + drawWidth - corner - margin, drawY + drawHeight - margin);
+        
+                ctx.lineTo(drawX + corner + margin, drawY + drawHeight - margin);
+                ctx.lineTo(drawX + corner + margin, drawY + drawHeight - corner - margin);
+                ctx.lineTo(drawX + margin, drawY + drawHeight - corner - margin);
+        
+                ctx.lineTo(drawX + margin, drawY + corner + margin);
+                ctx.fill();
+            } else {
+                const drawY = skillBoxY[0]-23;
+                ctx.beginPath();
+                ctx.moveTo(59, drawY);
+                ctx.lineTo(2000, drawY);
+                ctx.lineTo(2000, 600);
+                ctx.lineTo(59, 600);
+                ctx.fill();
+                ctx.drawImage(bottomLine, 0, 0, bottomLine.width, bottomLine.height, 86, 536, bottomLine.width * 0.54, bottomLine.height * 0.54);
             }
-            let r = color.substr(1, 2);
-            let g = color.substr(3, 2);
-            let b = color.substr(5, 2);
-            r = parseInt(r, 16);
-            g = parseInt(g, 16);
-            b = parseInt(b, 16);
-            ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
-            ctx.strokeStyle = ctx.fillStyle;
         }
-
-        const drawY = skillBoxY[0]-23;
-        const drawX = 84;
-        const drawWidth = 275;
-        const drawHeight = 520 - drawY;
-        const corner = 10;
-        const margin = 3;
-        ctx.beginPath();
-        ctx.moveTo(drawX, drawY + corner);
-        ctx.lineTo(drawX + corner, drawY + corner);
-        ctx.lineTo(drawX + corner, drawY);
-
-        ctx.lineTo(drawX + drawWidth - corner, drawY);
-        ctx.lineTo(drawX + drawWidth - corner, drawY + corner);
-        ctx.lineTo(drawX + drawWidth, drawY + corner);
-
-        ctx.lineTo(drawX + drawWidth, drawY + drawHeight - corner);
-        ctx.lineTo(drawX + drawWidth - corner, drawY + drawHeight - corner);
-        ctx.lineTo(drawX + drawWidth - corner, drawY + drawHeight);
-
-        ctx.lineTo(drawX + corner, drawY + drawHeight);
-        ctx.lineTo(drawX + corner, drawY + drawHeight - corner);
-        ctx.lineTo(drawX, drawY + drawHeight - corner);
-
-        ctx.lineTo(drawX, drawY + corner);
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.closePath();
-
-        ctx.beginPath();
-        ctx.moveTo(drawX + margin, drawY + corner + margin);
-        ctx.lineTo(drawX + corner + margin, drawY + corner + margin);
-        ctx.lineTo(drawX + corner + margin, drawY + margin);
-
-        ctx.lineTo(drawX + drawWidth - corner - margin, drawY + margin);
-        ctx.lineTo(drawX + drawWidth - corner - margin, drawY + corner + margin);
-        ctx.lineTo(drawX + drawWidth - margin, drawY + corner + margin);
-
-        ctx.lineTo(drawX + drawWidth - margin, drawY + drawHeight - corner - margin);
-        ctx.lineTo(drawX + drawWidth - corner - margin, drawY + drawHeight - corner - margin);
-        ctx.lineTo(drawX + drawWidth - corner - margin, drawY + drawHeight - margin);
-
-        ctx.lineTo(drawX + corner + margin, drawY + drawHeight - margin);
-        ctx.lineTo(drawX + corner + margin, drawY + drawHeight - corner - margin);
-        ctx.lineTo(drawX + margin, drawY + drawHeight - corner - margin);
-
-        ctx.lineTo(drawX + margin, drawY + corner + margin);
-        ctx.fill();
+    } else {
+        if(typeof(skillBoxY[0]) != "undefined"){
+            const alpha = 0.8;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            if(typeof(miscellaneous) != "undefined"){
+                let color;
+                if(power === "魏"){
+                    color = miscellaneous.weiColor;
+                }else if(power === "蜀"){
+                    color = miscellaneous.shuColor;
+                }else if(power === "吴"){
+                    color = miscellaneous.wuColor;
+                }else if(power === "群"){
+                    color = miscellaneous.qunColor;
+                }else if(power === "神"){
+                    color = miscellaneous.shenColor;
+                }else if(power === "晋"){
+                    color = miscellaneous.jinColor;
+                }else{
+                    color = miscellaneous.qunColor;
+                    console.error("不存在势力\"" + power + "\"对应的技能框颜色");
+                }
+                let r = color.substr(1, 2);
+                let g = color.substr(3, 2);
+                let b = color.substr(5, 2);
+                r = parseInt(r, 16);
+                g = parseInt(g, 16);
+                b = parseInt(b, 16);
+                ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+                ctx.strokeStyle = ctx.fillStyle;
+            }
+    
+            const drawY = skillBoxY[0]-23;
+            const drawX = 84;
+            const drawWidth = 275;
+            const drawHeight = 520 - drawY;
+            const corner = 10;
+            const margin = 3;
+            ctx.beginPath();
+            ctx.moveTo(drawX, drawY + corner);
+            ctx.lineTo(drawX + corner, drawY + corner);
+            ctx.lineTo(drawX + corner, drawY);
+    
+            ctx.lineTo(drawX + drawWidth - corner, drawY);
+            ctx.lineTo(drawX + drawWidth - corner, drawY + corner);
+            ctx.lineTo(drawX + drawWidth, drawY + corner);
+    
+            ctx.lineTo(drawX + drawWidth, drawY + drawHeight - corner);
+            ctx.lineTo(drawX + drawWidth - corner, drawY + drawHeight - corner);
+            ctx.lineTo(drawX + drawWidth - corner, drawY + drawHeight);
+    
+            ctx.lineTo(drawX + corner, drawY + drawHeight);
+            ctx.lineTo(drawX + corner, drawY + drawHeight - corner);
+            ctx.lineTo(drawX, drawY + drawHeight - corner);
+    
+            ctx.lineTo(drawX, drawY + corner);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+    
+            ctx.beginPath();
+            ctx.moveTo(drawX + margin, drawY + corner + margin);
+            ctx.lineTo(drawX + corner + margin, drawY + corner + margin);
+            ctx.lineTo(drawX + corner + margin, drawY + margin);
+    
+            ctx.lineTo(drawX + drawWidth - corner - margin, drawY + margin);
+            ctx.lineTo(drawX + drawWidth - corner - margin, drawY + corner + margin);
+            ctx.lineTo(drawX + drawWidth - margin, drawY + corner + margin);
+    
+            ctx.lineTo(drawX + drawWidth - margin, drawY + drawHeight - corner - margin);
+            ctx.lineTo(drawX + drawWidth - corner - margin, drawY + drawHeight - corner - margin);
+            ctx.lineTo(drawX + drawWidth - corner - margin, drawY + drawHeight - margin);
+    
+            ctx.lineTo(drawX + corner + margin, drawY + drawHeight - margin);
+            ctx.lineTo(drawX + corner + margin, drawY + drawHeight - corner - margin);
+            ctx.lineTo(drawX + margin, drawY + drawHeight - corner - margin);
+    
+            ctx.lineTo(drawX + margin, drawY + corner + margin);
+            ctx.fill();
+        }
+    
+        ctx.fillStyle = 'rgb(0, 0, 0)';
     }
-
-    ctx.fillStyle = 'rgb(0, 0, 0)';
     // 第三次遍历，绘制文字
     iterationText(true);
 
@@ -985,13 +1131,33 @@ function drawSkill(ctx, skills){
             }else{
                 ctx.fillStyle = "rgb(0, 0, 0)"
             }
-            ctx.drawImage(miscellaneous.img, S[0], S[1], S[2], S[3], skillTextDrawingAttr.skillTopX-69, skillBoxY[i]-22, length, length/2);
-            ctx.font = "20px FangZhengLiShu";
-            let str = skills[i].name.substr(0, 2);
-            if(isS2T){
-                str = convertToTraditional(str);
+            if (useNewUI) {
+                if (power === "神") {
+                    ctx.drawImage(miscellaneous.img, S[0], S[1], S[2], S[3], skillTextDrawingAttr.skillTopX - 68, skillBoxY[i]-22, length, length/2);
+                    ctx.font = "20px FangZhengLiShu";
+                    let str = skills[i].name.substr(0, 2);
+                    if(isS2T){
+                        str = convertToTraditional(str);
+                    }
+                    ctx.fillText(str, skillTextDrawingAttr.skillTopX- 58, skillBoxY[i]+1.5);
+                } else {
+                    ctx.drawImage(miscellaneous.img, S[0], S[1], S[2], S[3], skillTextDrawingAttr.skillTopX - 90, skillBoxY[i]-22, length, length/2);
+                    ctx.font = "20px FangZhengLiShu";
+                    let str = skills[i].name.substr(0, 2);
+                    if(isS2T){
+                        str = convertToTraditional(str);
+                    }
+                    ctx.fillText(str, skillTextDrawingAttr.skillTopX- 80, skillBoxY[i]+1.5);
+                }
+            } else {
+                ctx.drawImage(miscellaneous.img, S[0], S[1], S[2], S[3], skillTextDrawingAttr.skillTopX - 69, skillBoxY[i]-22, length, length/2);
+                ctx.font = "20px FangZhengLiShu";
+                let str = skills[i].name.substr(0, 2);
+                if(isS2T){
+                    str = convertToTraditional(str);
+                }
+                ctx.fillText(str, skillTextDrawingAttr.skillTopX- 57, skillBoxY[i]+1.5);
             }
-            ctx.fillText(str, skillTextDrawingAttr.skillTopX-57, skillBoxY[i]+1.5);
         }
     }
 
@@ -1012,32 +1178,61 @@ function drawBottomInfo(ctx, isProducer, isIllustrator){
     ctx.font = "9px FangZhengZhunYuan";
     let leftPos = 85;
     let rightPos = 340;
-    if(power === "神"){
-        ctx.fillStyle = 'rgb(255, 255, 255)';
-        leftPos = 150;
-        rightPos = 370;
-    }else{
-        ctx.fillStyle = 'rgb(0, 0, 0)';
-        leftPos = 85;
-        rightPos = 350;
+    if (useNewUI) {
+        if(power === "神"){
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.strokeStyle = 'rgb(0, 0, 0)';
+            ctx.lineWidth = 1;
+            leftPos = 100;
+            rightPos = 350;
+            ctx.strokeText(str, leftPos, 546);
+            ctx.fillText(str, leftPos, 546);
+    
+            if(isCardNumber){
+                str = "" + document.getElementById("cardNumber").value;
+                ctx.textAlign = 'right';
+                ctx.strokeText(str, rightPos, 546);
+                ctx.fillText(str, rightPos, 546);
+            }
+        }else{
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            leftPos = 85;
+            rightPos = 350;
+            ctx.fillText(str, leftPos, 556);
+    
+            if(isCardNumber){
+                str = "" + document.getElementById("cardNumber").value;
+                ctx.textAlign = 'right';
+                ctx.fillText(str, rightPos, 556);
+            }
+        }
+    } else {
+        if(power === "神"){
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            leftPos = 150;
+            rightPos = 370;
+        }else{
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            leftPos = 85;
+            rightPos = 350;
+        }
+        ctx.fillText(str, leftPos, 539);
+    
+        if(isCardNumber){
+            str = "" + document.getElementById("cardNumber").value;
+            ctx.textAlign = 'right';
+            ctx.fillText(str, rightPos, 539);
+        }
     }
-    ctx.fillText(str, leftPos, 539);
-
-    if(isCardNumber){
-        str = "" + document.getElementById("cardNumber").value;
-        ctx.textAlign = 'right';
-        ctx.fillText(str, rightPos, 539);
-    }
-
 }
 
 // 绘制版本信息
 function drawVersionInformation(ctx){
-    const drawX = 20;
-    const drawY = 553;
+    const drawX = useNewUI ? 270 : 20;
+    const drawY = useNewUI ? 570 : 553;
     ctx.textAlign = 'left';
     ctx.font = "8px FangZhengZhunYuan";
-    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.fillStyle = useNewUI ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)";
     const info = "" + document.getElementById("AppName").innerText;
     ctx.fillText(info, drawX, drawY);
 }
@@ -1081,7 +1276,7 @@ function draw(){
     drawBottomInfo(ctx, isProducer, isIllustrator);
 
     // 绘制版本信息
-    drawVersionInformation(ctx);
+    // drawVersionInformation(ctx);
 
     window.requestAnimationFrame(draw);
 }
